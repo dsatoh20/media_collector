@@ -1,0 +1,62 @@
+{% extends 'media_uploader/layout.html' %}
+{% load media_uploader_extras %}
+{% block title %}Project{% endblock %}
+{% block header %}
+{{ project.title }}
+<div class="">
+    {% if project.pub == False %}
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2M5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1"/>
+    </svg>
+    {% elif project.pub == True %}
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-unlock" viewBox="0 0 16 16">
+        <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2M3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1z"/>
+    </svg>
+    {% endif %}
+</div>
+{% endblock %}
+{% block content %}
+<div class="btn-group btn-group-lg" style="margin-top: 1rem;">
+    <a href='{% url "download" project.id %}' class="btn btn-outline-primary" aria-current="Basic radio toggle button group">DOWNLOAD ALL</a>
+    {% for label in project.labels %}
+    <a href="#" class="btn btn-outline-primary">{{ label }}</a>
+    {% endfor %}
+</div>
+<div class="mb-2" style="margin-top: 1rem;">
+    <div class="row">
+        <div class="card" style="width: 18rem; margin: 1rem;">
+            <form action="{% url 'project' project.id %}" method="post" name="file_upload_form" enctype="multipart/form-data">
+                {% csrf_token %}
+                <legend style="margin: 1rem;">Upload new item</legend>
+                <div class="mb-3" style="margin: 1rem;">
+                    <label for="formGroupExampleInput" class="form-label">Image</label>
+                    {{ file_upload_form.image }}
+                </div>
+                <div class="mb-3" style="margin: 1rem;">
+                    <label for="formGroupExampleInput" class="form-label">Label</label>
+                    {{ file_upload_form.label }}
+                </div>
+                <div class="d-grid gap-2" style="margin: 1rem;"><button class="btn btn-primary">UPLOAD</button></div>
+            </form>
+        </div>
+    </div>
+    <div class="row row-cols-2">
+        
+        {% for file in files %}
+            <div class="card" style="width: 18rem; margin:1rem;">
+                <img src='{{ file.image.url }}' class="card-img-top img-thumbnail" alt="..." style="margin-top: 1rem;"/>
+                <div class="card-body">
+                    <h5 class="card-title">{{ file.project.labels|resolve_label:file.label }}</h5>
+                    <p class="card-text">{{file.owner.username}} added <br>{{file.upload_date}}</p>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a href="#" class="btn btn-outline-primary">DOWNLOAD</a>
+                        <a href="#" class="btn btn-outline-primary">EDIT</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+                
+    </div>
+</div>
+
+{% endblock %}

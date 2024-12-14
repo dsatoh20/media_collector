@@ -1,0 +1,59 @@
+{% extends 'media_uploader/layout.html' %}
+{% block title %}Home{% endblock %}
+{% block header %}Ongoing Projects{% endblock %}
+{% block content %}
+<div class="mb-2">
+    <div class="row">
+        <div class="card" style="width: 18rem; margin:1rem;">
+            <form action="{% url 'index' %}" method="post" name="create_project_form">
+                {% csrf_token %}
+                <legend style="margin: 1rem;">Create new project</legend>
+                <div class="mb-3" style="margin: 1rem;">
+                    <label for="formGroupExampleInput" class="form-label">Project Title</label>
+                    {{ create_project_form.title }}
+                </div>
+                <div class="mb-3" style="margin: 1rem;">
+                    {{ create_project_form.pub }}
+                    <label for="flexSwitchCheckDefault" class="form-check-label">Public</label>
+                </div>
+                <div class="mb-3" style="margin: 1rem;">
+                    <label for="formGroupExampleInput" class="form-label">Labels (Type like ["dog", "cat"])</label>
+                    {{ create_project_form.labels }}
+                </div>        
+                <div class="d-grid gap-2" style="margin: 1rem;"><button class="btn btn-primary">CREATE</button></div>
+            </form>
+        </div>
+    </div>
+    <div class="row row-cols-2">
+        {% for project in projects %}
+            <div class="card" style="width: 18rem; margin:1rem;">
+                <div class="card-title" style="margin-top: 0.5rem;">
+                    {% if project.pub == False %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2M5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1"/>
+                    </svg>
+                    private
+                    {% elif project.pub == True %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-unlock" viewBox="0 0 16 16">
+                        <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2M3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1z"/>
+                    </svg>
+                    public
+                    {% endif %}
+                </div>
+                <img src="https://soco-st.com/wp-content/themes/socost/upload/11749_color.png" class="card-img-top img-thumbnail" alt="..." />
+                <div class="card-body">
+                    <h5 class="card-title">{{ project.title }}</h5>
+                    <p class="card-text">{{project.owner.username}} started <br>{{project.start_date}}</p>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a href="{% url 'project' project.id %}" class="btn btn-outline-primary">DETAIL</a>
+                        <a href="#" class="btn btn-outline-primary">JOIN</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        
+    </div>
+    
+</div>
+
+{% endblock %}
